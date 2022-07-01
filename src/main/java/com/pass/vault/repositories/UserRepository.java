@@ -14,4 +14,7 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
     @Query("from UserEntity where email=?1")
     public Optional<UserEntity> findByEmail(String email);
 
+    @Query("select id from UserEntity where email=?1")
+    public Integer getIdUserByEmail(String email);
+
 }

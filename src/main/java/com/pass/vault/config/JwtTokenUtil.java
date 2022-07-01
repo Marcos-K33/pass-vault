@@ -26,7 +26,7 @@ public class JwtTokenUtil {
     public String generateAccesToken(UserEntity user) {
         Algorithm algorithm = Algorithm.HMAC512(secret.getBytes());
         String token = JWT.create()
-                .withSubject(user.getUsername() + ", " + user.getEmail())
+                .withSubject(user.getUsername() + "," + user.getEmail())
                 .withExpiresAt(new Date(new Date().getTime() + expiration))
                 .sign(algorithm);
         return token;

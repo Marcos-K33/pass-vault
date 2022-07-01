@@ -22,12 +22,16 @@ public class UserService {
     public UserEntity registerUser(RegisterRequest request) {
         UserEntity entity = new UserEntity();
         try {
-            entity.setEmail(request.getEmail());
-            entity.setUsername(request.getName());
-            entity.setPassword(encoder.encode(request.getPassword()));
-            entity.setCreateTime(new Date());
-            entity.setUpdateAt(new Date());
-            uRepo.save(entity);
+            UserEntity exist = uRepo.findByEmail(request.getEmail()).orElse(null);
+            if (exist == null) {
+                entity.setEmail(request.getEmail());
+                entity.setUsername(request.getName());
+                entity.setPassword(encoder.encode(request.getPassword()));
+                entity.setCreateTime(new Date());
+                entity.setUpdateAt(new Date());
+                uRepo.save(entity);
+                return entity;
+            }
             return entity;
         } catch (Exception e) {
             e.printStackTrace();

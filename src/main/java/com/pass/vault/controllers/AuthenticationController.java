@@ -56,13 +56,13 @@ public class AuthenticationController {
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
         try {
             UserEntity savedEntity = uService.registerUser(request);
-            if (savedEntity != null) {
+            if (savedEntity.getId() != null && savedEntity.getId() > 0) {
                 return ResponseEntity.ok().build();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.emptyMap());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyMap());
     }
 
 }
