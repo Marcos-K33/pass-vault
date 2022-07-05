@@ -1,7 +1,5 @@
 package com.pass.vault.controllers;
 
-import java.util.Collections;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,8 @@ import com.pass.vault.requests.RegisterRequest;
 import com.pass.vault.responses.LoginResponse;
 import com.pass.vault.services.UserService;
 
+import com.pass.vault.utils.ResponseWrapper;
+
 @RestController
 @RequestMapping("/auth/")
 public class AuthenticationController {
@@ -38,31 +38,39 @@ public class AuthenticationController {
     UserService uService;
 
     @PostMapping(path = "login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) {
+    public ResponseEntity<ResponseWrapper> login(@RequestBody @Valid LoginRequest request) {
+        ResponseWrapper rw = new ResponseWrapper();
         try {
             Authentication auth = authManager
                     .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             UserEntity user = (UserEntity) auth.getPrincipal();
             String token = jwtTUtil.generateAccesToken(user);
             LoginResponse response = new LoginResponse(user.getEmail(), token);
-
-            return ResponseEntity.ok(response);
+            rw.setMessage("Access ok");
+            rw.setSuccess(true);
+            rw.setStatus(HttpStatus.OK);
+            rw.setData(response);
+            return ResponseEntity.ok(rw);
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            rw.unauthenticated();
+            return ResponseEntity.status(rw.getStatus()).body(rw);
         }
     }
 
     @PostMapping(path = "register", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
+    public ResponseEntity<ResponseWrapper> register(@RequestBody @Valid RegisterRequest request) {
+        ResponseWrapper rw = new ResponseWrapper();
         try {
             UserEntity savedEntity = uService.registerUser(request);
             if (savedEntity.getId() != null && savedEntity.getId() > 0) {
+                rw.OK();
                 return ResponseEntity.ok().build();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.emptyMap());
+        rw.errorServer();
+        return ResponseEntity.status(rw.getStatus()).body(rw);
     }
 
 }

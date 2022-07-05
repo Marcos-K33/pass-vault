@@ -15,6 +15,9 @@ public interface VaultPassRepository extends CrudRepository<VaultPassEntity, Lon
     @Query("FROM VaultPassEntity WHERE encrypt_value=:hash AND id_user=:idUser")
     public VaultPassEntity getByIdUserAndHash(@Param("hash") String hash, @Param("idUser") Long idUser);
 
-    @Query("FROM VaultPassEntity WHERE id_user=:id")
-    public List<VaultPassEntity> findByIdUser(@Param("id") Long id);
+    @Query("FROM VaultPassEntity WHERE id_user=?1")
+    public List<VaultPassEntity> getPaswords(Long id);
+    // @Query(value = "SELECT * FROM vault_pass WHERE id_user=?1", nativeQuery =
+    // true)
+    // public List<VaultPassEntity> getPaswords(Long id);
 }
