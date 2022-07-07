@@ -3,9 +3,11 @@ package com.pass.vault.utils;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
+import java.util.Random;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -22,11 +24,15 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class SecurePass {
 
-    /**
-     * Algorithm to be used in decryption an encryption
-     */
+    private SecurePass() {
+        throw new UnsupportedOperationException("El constructor vacio no está permitido");
+    }
+
+    // Algorithm to be used in decryption an encryption
     private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
     private static final String SALT = "K6qjJl+sgJxTS6CtBrcBKw6QKgJklhpgaZO0ImSAUB0=";
+    private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$¡?)&%$"
+            .toCharArray();
 
     /**
      * Method to generatte the secret key to use in decryption and encryption
@@ -40,8 +46,7 @@ public class SecurePass {
             throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         KeySpec spec = new PBEKeySpec(keyPass.toCharArray(), SALT.getBytes(), 5000, 256);
-        SecretKey key = new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
-        return key;
+        return new SecretKeySpec(factory.generateSecret(spec).getEncoded(), "AES");
     }
 
     /**
@@ -94,5 +99,21 @@ public class SecurePass {
         byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(passwordEncrypt));
 
         return new String(plainText);
+    }
+
+    public static String generateRandomPasword(int leng) {
+        StringBuilder pasword = new StringBuilder();
+        Random random = new SecureRandom();
+
+        for (int i = 0; i < (leng - 4); i++) {
+            pasword.append(CHARACTERS[random.nextInt(CHARACTERS.length)]);
+        }
+
+        pasword.insert(random.nextInt(pasword.length()), "Ñ");
+        pasword.insert(random.nextInt(pasword.length()), CHARACTERS[random.nextInt(CHARACTERS.length)]);
+        pasword.insert(random.nextInt(pasword.length()), CHARACTERS[random.nextInt(CHARACTERS.length)]);
+        pasword.insert(random.nextInt(pasword.length()), "ñ");
+
+        return pasword.toString();
     }
 }

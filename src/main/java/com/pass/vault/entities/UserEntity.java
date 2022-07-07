@@ -1,6 +1,7 @@
 package com.pass.vault.entities;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -150,7 +151,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.emptyList();
     }
 
     @Override

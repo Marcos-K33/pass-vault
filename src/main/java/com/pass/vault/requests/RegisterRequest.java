@@ -10,8 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class RegisterRequest {
 
     private static final String EMAIL_REGEX = ".+@.+\\..+";
-    // private static final String EMAILREGEX =
-    // "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
 
     @JsonProperty
     private String name;
@@ -85,6 +83,20 @@ public class RegisterRequest {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+
+    @Override
+    public String toString() {
+        return "RegisterRequest {email=" + email
+                + ", name=" + name
+                + ", password=" + password
+                + "}";
     }
 
 }

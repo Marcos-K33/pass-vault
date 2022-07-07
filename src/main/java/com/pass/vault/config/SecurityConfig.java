@@ -29,7 +29,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(username -> uRepo.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " does not exist")));
+                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " does not exist")))
+                .passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Bean
@@ -44,13 +45,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .formLogin().disable().logout().permitAll().and()
-                .authorizeRequests().antMatchers("/auth/**").permitAll().anyRequest().authenticated()
+                .authorizeRequests().antMatchers("/auth/**", "/pass/generate").permitAll().anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jTFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 

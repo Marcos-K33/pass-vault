@@ -2,6 +2,8 @@ package com.pass.vault.config;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -14,8 +16,7 @@ import com.pass.vault.entities.UserEntity;
 @Component
 public class JwtTokenUtil {
 
-    // private static final long EXPIRATION = 24 * 60 * 60 * 1000; // 24 hours
-    // private static final String SECRET = "6vSbxlTZygSMdHmRvJeGCy92008TWvju";
+    private final Logger LOG = LoggerFactory.getLogger(JwtTokenUtil.class);
 
     @Value("${jwt.secret}")
     private String secret;
@@ -25,11 +26,10 @@ public class JwtTokenUtil {
 
     public String generateAccesToken(UserEntity user) {
         Algorithm algorithm = Algorithm.HMAC512(secret.getBytes());
-        String token = JWT.create()
+        return JWT.create()
                 .withSubject(user.getUsername() + "," + user.getEmail())
                 .withExpiresAt(new Date(new Date().getTime() + expiration))
                 .sign(algorithm);
-        return token;
     }
 
     public boolean isValidAccessToken(String token) {
@@ -41,7 +41,7 @@ public class JwtTokenUtil {
             String userData = decoder.getSubject();
             return !userData.isEmpty();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Ocurrió un error al validar el token", e);
         }
         return false;
     }
@@ -52,10 +52,9 @@ public class JwtTokenUtil {
             Algorithm algorithm = Algorithm.HMAC512(secret.getBytes());
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT decoder = verifier.verify(token);
-            String userData = decoder.getSubject();
-            return userData;
+            return decoder.getSubject();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Ocurrió un error al obtener el subjet del token", e);
         }
         return "";
     }

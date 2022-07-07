@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import com.pass.vault.utils.SecurePass;
 
 @Service
 public class VaultPassService {
+
+    private final Logger log = LoggerFactory.getLogger(VaultPassService.class);
 
     @Autowired
     JwtTokenUtil jUtil;
@@ -41,7 +45,7 @@ public class VaultPassService {
 
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("ocurrió un error al guardar la contrasenia", e);
         }
         return false;
     }
@@ -51,10 +55,9 @@ public class VaultPassService {
             token = token.replace("Bearer ", "");
             String email = jUtil.getSubjectFromtoken(token).split(",")[1];
             Integer idUser = uRepository.getIdUserByEmail(email);
-            List<VaultPassEntity> res = vPRepository.getPaswords(idUser.longValue());
-            return res;
+            return vPRepository.getPaswords(idUser.longValue());
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("ocurrió un error al obtener las contrasenias", e);
         }
         return new ArrayList<>();
     }
@@ -71,8 +74,12 @@ public class VaultPassService {
                 return response;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("ocurrió un error al desencriptar la contrasenia", e);
         }
         return response;
+    }
+
+    public String generatePasword(int leng) {
+        return SecurePass.generateRandomPasword(leng);
     }
 }

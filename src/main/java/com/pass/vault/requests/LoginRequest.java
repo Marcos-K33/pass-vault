@@ -12,8 +12,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class LoginRequest {
 
     private static final String EMAIL_REGEX = ".+@.+\\..+";
-    // private static final String EMAIL_REGEX =
-    // "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
 
     @JsonProperty
     @NotNull(message = "El correo es obligatorio")

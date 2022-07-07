@@ -83,4 +83,18 @@ public class VaultPassRequest {
         this.secret = secret;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+
+    @Override
+    public String toString() {
+        return "VaultPassRequest {account=" + account
+                + ", platform=" + platform
+                + ", secret=" + secret
+                + "}";
+    }
+
 }

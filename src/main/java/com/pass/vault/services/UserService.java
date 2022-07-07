@@ -2,6 +2,8 @@ package com.pass.vault.services;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import com.pass.vault.requests.RegisterRequest;
 
 @Service
 public class UserService {
+
+    private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     @Autowired
     UserRepository uRepo;
@@ -34,7 +38,7 @@ public class UserService {
             }
             return entity;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("error al registrar usuario", e);
         }
         return null;
     }
